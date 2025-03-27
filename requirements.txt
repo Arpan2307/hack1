@@ -1,0 +1,5 @@
+PyMuPDF
+nltk==3.8.1
+pandas
+google-generativeai
+streamlit
