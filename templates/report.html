@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="shortcut icon" href="">
+
+    <title>Report</title>
+</head>
+<body>
+    <h2>Generated Report</h2>
+    <p>{{ report }}</p>
+
+    <h3>Ask up to 3 additional questions:</h3>
+    <form action="/report" method="post">
+        <input type="text" name="question1" placeholder="Enter question 1"><br>
+        <input type="text" name="question2" placeholder="Enter question 2"><br>
+        <input type="text" name="question3" placeholder="Enter question 3"><br>
+        <input type="submit" value="Submit Questions">
+    </form>
+</body>
+</html>

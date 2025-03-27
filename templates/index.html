@@ -1,41 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="shortcut icon" href="">
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Analyzer</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
-        .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-        h2 { color: #333; }
-        input[type="file"] { margin: 20px 0; }
-        button { padding: 10px 20px; border: none; background: #007BFF; color: white; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .result { text-align: left; margin-top: 20px; }
-    </style>
+    <title>PDF Analysis</title>
+    <script>
+        function uploadPDF() {
+            let formData = new FormData();
+            let fileInput = document.getElementById("pdfFile");
+            
+            if (!fileInput.files.length) {
+                alert("Please select a PDF file to upload.");
+                return;
+            }
+
+            formData.append("file", fileInput.files[0]);
+
+            fetch("/upload", { method: "POST", body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Error: " + data.error);
+                    return;
+                }
+
+                document.getElementById("report").innerText = data.report;
+                document.getElementById("questionSection").style.display = "block"; // Show question section
+            })
+            .catch(error => alert("Error uploading file: " + error));
+        }
+
+        function askQuestions() {
+            let questions = [];
+            for (let i = 1; i <= 3; i++) {
+                let question = document.getElementById("question" + i).value.trim();
+                if (question) questions.push(question);
+            }
+
+            if (questions.length === 0) {
+                alert("Please enter at least one question.");
+                return;
+            }
+
+            fetch("/ask_questions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ report: document.getElementById("report").innerText, questions: questions })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Error: " + data.error);
+                    return;
+                }
+                document.getElementById("response").innerText = data.response;
+            })
+            .catch(error => alert("Error processing questions: " + error));
+        }
+    </script>
 </head>
 <body>
+    <h1>Upload PDF for Analysis</h1>
+    <input type="file" id="pdfFile">
+    <button onclick="uploadPDF()">Upload & Generate Report</button>
 
-    <div class="container">
-        <h2>Upload PDF for Analysis</h2>
-        <form action="/" method="post" enctype="multipart/form-data">
-            <input type="file" name="pdf_file" required>
-            <br>
-            <button type="submit">Analyze PDF</button>
-        </form>
+    <h2>Generated Report</h2>
+    <p id="report"></p>
 
-        {% if analysis %}
-        <div class="result">
-            <h3>Analysis Report:</h3>
-            <p>{{ analysis | safe }}</p>
-            <a href="/download">
-                <button>Download Processed CSV</button>
-            </a>
-        </div>
-        {% endif %}
+    <div id="questionSection" style="display: none;">
+        <h2>Ask Questions (Max 3)</h2>
+        <input type="text" id="question1" placeholder="Enter Question 1"><br>
+        <input type="text" id="question2" placeholder="Enter Question 2"><br>
+        <input type="text" id="question3" placeholder="Enter Question 3"><br>
+        <button onclick="askQuestions()">Submit Questions</button>
+
+        <h2>Response</h2>
+        <p id="response"></p>
     </div>
-
 </body>
 </html>
