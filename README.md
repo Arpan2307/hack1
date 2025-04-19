@@ -1,5 +1,5 @@
 
-# 📄 Earnings Call Analyzer – Streamlit Web App
+# 📄 Comapany Transcript Analyzer – Streamlit Web App
 
 A **Streamlit-based web application** that enables users to upload **earnings call transcripts in PDF format**, extract clean textual data (ignoring tables), and generate **detailed AI-powered reports** using **Google Gemini**. Users can also ask **custom questions** and download the extracted sentences as a CSV file for further analysis.
 
